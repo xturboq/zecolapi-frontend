@@ -16,8 +16,8 @@ export type GlobalHeaderRightProps = {
 
 export const AvatarName = () => {
   const { initialState } = useModel('@@initialState');
-  const { currentUser } = initialState || {};
-  return <span className="anticon">{currentUser?.name}</span>;
+  const { loginUser } = initialState || {};
+  return <span className="anticon">{loginUser?.userName}</span>;
 };
 
 const useStyles = createStyles(({ token }) => {
@@ -44,16 +44,16 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
    */
   const loginOut = async () => {
     await outLogin();
-    const { search, pathname } = window.location;
+    const { search, pathuserName } = window.location;
     const urlParams = new URL(window.location.href).searchParams;
     /** 此方法会跳转到 redirect 参数所在的位置 */
     const redirect = urlParams.get('redirect');
     // Note: There may be security issues, please note
-    if (window.location.pathname !== '/user/login' && !redirect) {
+    if (window.location.pathuserName !== '/user/login' && !redirect) {
       history.replace({
-        pathname: '/user/login',
+        pathuserName: '/user/login',
         search: stringify({
-          redirect: pathname + search,
+          redirect: pathuserName + search,
         }),
       });
     }
@@ -67,7 +67,7 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
       const { key } = event;
       if (key === 'logout') {
         flushSync(() => {
-          setInitialState((s) => ({ ...s, currentUser: undefined }));
+          setInitialState((s) => ({ ...s, loginUser: undefined }));
         });
         loginOut();
         return;
@@ -93,9 +93,9 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
     return loading;
   }
 
-  const { currentUser } = initialState;
+  const { loginUser } = initialState;
 
-  if (!currentUser || !currentUser.name) {
+  if (!loginUser || !loginUser.userName) {
     return loading;
   }
 
