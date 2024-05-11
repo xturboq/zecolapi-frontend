@@ -18,6 +18,7 @@ import type { FormValueType } from './components/UpdateForm';
 import UpdateForm from './components/UpdateForm';
 import {listInterfaceInfoByPageUsingGet} from "@/services/zecolapi-backend/interfaceInfoController";
 import {RequestData} from "@ant-design/pro-table/es/typing";
+import CreateModal from "@/pages/InterfaceInfo/components/CreateModal";
 
 /**
  * @en-US Add node
@@ -184,11 +185,13 @@ const TableList: React.FC = () => {
       title: '创建时间',
       dataIndex: 'createTime',
       valueType: 'dateTime',
+      hideInForm: true,
     },
     {
       title: '更新时间',
       dataIndex: 'updateTime',
       valueType: 'dateTime',
+      hideInForm: true,
     },
     {
       title: '操作',
@@ -202,11 +205,9 @@ const TableList: React.FC = () => {
             setCurrentRow(record);
           }}
         >
-          配置
+          修改
         </a>,
-        <a key="subscribeAlert" href="https://procomponents.ant.design/">
-          订阅警报
-        </a>,
+
       ],
     },
   ];
@@ -232,14 +233,20 @@ const TableList: React.FC = () => {
         ]}
         //表格请求数据处理逻辑
         request={async (params,sort: Record<string, SortOrder>, filter: Record<string, React.ReactText[] | null>) =>{
-          const res = await listInterfaceInfoByPageUsingGet({
+          const res: any = await listInterfaceInfoByPageUsingGet({
             ...params
           })
         if (res?.data) {
           return {
             data: res?.data.records || [],
             success: true,
-            total: res.total,
+            total: res.data.total,
+          }
+        }else {
+          return {
+            data: [],
+            success: false,
+            total: 0,
           }
         }
         }}
@@ -352,6 +359,20 @@ const TableList: React.FC = () => {
           />
         )}
       </Drawer>
+      {/* 创建一个CreateModal组件，用于在点击新增按钮时弹出 */}
+      <CreateModal
+        columns={columns}
+        // 当取消按钮被点击时,设置更新模态框为false以隐藏模态窗口
+        onCancel={() => {
+          handleModalOpen(false);
+        }}
+        // 当用户点击提交按钮之后，调用handleAdd函数处理提交的数据，去请求后端添加数据(这里的报错不用管,可能里面组件的属性和外层的不一致)
+        onSubmit={(values) => {
+          handleAdd(values);
+        }}
+        // 根据更新窗口的值决定模态窗口是否显示
+        visible={createModalOpen}
+      />
     </PageContainer>
   );
 };
