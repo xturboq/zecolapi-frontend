@@ -1,4 +1,5 @@
 export default [
+  { path:'/', name:'主页',icon: 'smile', component:'./Index'},
   {
     path: '/user',
     layout: false,
